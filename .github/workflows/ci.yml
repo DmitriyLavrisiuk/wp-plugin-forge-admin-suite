@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: pnpm
+          cache-dependency-path: ui/pnpm-lock.yaml
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install root dependencies
+        run: pnpm install
+
+      - name: Install UI dependencies
+        run: pnpm -C ui install
+
+      - name: Lint UI
+        run: pnpm -C ui lint
+
+      - name: Build UI
+        run: pnpm -C ui build
+
+      - name: PHP lint
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'
+
+      - name: Run PHP lint
+        run: find . -path './ui/node_modules' -prune -o -name '*.php' -print0 | xargs -0 -n 1 php -l
