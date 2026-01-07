@@ -35,12 +35,24 @@ pnpm -C ui build
 
 WordPress loads production assets from `ui/dist/.vite/manifest.json`.
 
+## Release notes (v0.1.3)
+
+- Version is synced across plugin, REST, and UI, and WP admin now shows the correct version.
+- Production assets use file-based cache busting when available.
+
 ## Versioning workflow
 
-1. Create a release branch (e.g. `release/v0.1.1`).
+1. Create a release branch (e.g. `release/v0.1.3`).
 2. Open a PR, review, and merge.
-3. Tag the merge commit (e.g. `v0.1.1`).
+3. Tag the merge commit (e.g. `v0.1.3`).
 4. Delete the release branch after the tag is pushed.
+
+## Versioning checklist
+
+- Update `FORGE_ADMIN_SUITE_VERSION` and the plugin header in `forge-admin-suite.php`.
+- Update `ui/package.json` version.
+- Update `readme.txt` stable tag.
+- Add a `CHANGELOG.md` entry.
 
 ## Troubleshooting
 
