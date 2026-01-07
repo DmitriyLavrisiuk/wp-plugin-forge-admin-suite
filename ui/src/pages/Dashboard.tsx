@@ -1,6 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { getAppConfig } from '../lib/appConfig';
+import ErrorState from '../components/common/ErrorState';
+import LoadingState from '../components/common/LoadingState';
+import { apiGet } from '../lib/apiClient';
 
 type PingResponse = {
   ok: boolean;
@@ -15,43 +18,22 @@ type RequestState =
 function Dashboard() {
   const [state, setState] = useState<RequestState>({ status: 'loading' });
 
-  useEffect(() => {
-    let isMounted = true;
-
-    async function fetchPing() {
-      try {
-        const { restUrl, nonce } = getAppConfig();
-        const response = await fetch(`${restUrl}forge-admin-suite/v1/ping`, {
-          headers: {
-            'X-WP-Nonce': nonce,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(`Request failed with ${response.status}`);
-        }
-
-        const data = (await response.json()) as PingResponse;
-        if (isMounted) {
-          setState({ status: 'success', data });
-        }
-      } catch (error) {
-        if (isMounted) {
-          setState({
-            status: 'error',
-            message:
-              error instanceof Error ? error.message : 'Something went wrong.',
-          });
-        }
-      }
+  const fetchPing = useCallback(async () => {
+    setState({ status: 'loading' });
+    try {
+      const data = await apiGet<PingResponse>('forge-admin-suite/v1/ping');
+      setState({ status: 'success', data });
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Something went wrong.';
+      setState({ status: 'error', message });
+      toast.error('Failed to load API status.');
     }
-
-    fetchPing();
-
-    return () => {
-      isMounted = false;
-    };
   }, []);
+
+  useEffect(() => {
+    void fetchPing();
+  }, [fetchPing]);
 
   return (
     <section className="space-y-6">
@@ -67,10 +49,10 @@ function Dashboard() {
         </CardHeader>
         <CardContent>
           {state.status === 'loading' && (
-            <p className="text-sm text-slate-600">Loading API status...</p>
+            <LoadingState message="Loading API status..." />
           )}
           {state.status === 'error' && (
-            <p className="text-sm text-red-600">{state.message}</p>
+            <ErrorState message={state.message} onRetry={fetchPing} />
           )}
           {state.status === 'success' && (
             <div className="space-y-2 text-sm text-slate-700">

@@ -2,9 +2,7 @@
 
 namespace Forge_Admin_Suite;
 
-if (!defined('ABSPATH')) {
-    exit;
-}
+defined('ABSPATH') || exit;
 
 require_once FORGE_ADMIN_SUITE_PATH . 'includes/class-admin-page.php';
 require_once FORGE_ADMIN_SUITE_PATH . 'includes/class-assets.php';

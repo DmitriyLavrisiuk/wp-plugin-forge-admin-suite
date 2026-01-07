@@ -21,6 +21,8 @@ export default [
       },
       globals: {
         ...globals.browser,
+        ...globals.browserBuiltin,
+        RequestInit: 'readonly',
       },
     },
     plugins: {

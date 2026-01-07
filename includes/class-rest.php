@@ -5,9 +5,7 @@ namespace Forge_Admin_Suite;
 use WP_Error;
 use WP_REST_Request;
 
-if (!defined('ABSPATH')) {
-    exit;
-}
+defined('ABSPATH') || exit;
 
 class Rest
 {
