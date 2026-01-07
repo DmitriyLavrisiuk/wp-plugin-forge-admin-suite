@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.1.4
+- Settings MVP with REST endpoints, UI form, and version bump.
+
 ## v0.1.3
 - Sync version across plugin, REST, and UI with improved cache busting.
 

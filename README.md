@@ -35,6 +35,11 @@ pnpm -C ui build
 
 WordPress loads production assets from `ui/dist/.vite/manifest.json`.
 
+## Release notes (v0.1.4)
+
+- Settings MVP with REST-backed options and a basic admin form.
+- Version bump to keep WP, REST, and UI in sync.
+
 ## Release notes (v0.1.3)
 
 - Version is synced across plugin, REST, and UI, and WP admin now shows the correct version.
@@ -66,3 +71,17 @@ WordPress loads production assets from `ui/dist/.vite/manifest.json`.
 - `ui/src/components/common/` contains shared UI (loading, error, error boundary).
 - New pages should live in `ui/src/pages/`, wired through `ui/src/App.tsx`.
 - Toasts use `sonner` and are triggered via `toast.*` with the `Toaster` mounted in `App`.
+
+## Settings (v0.1.4)
+
+- Stored in the `forge_admin_suite_options` option.
+- Fields: `apiEndpoint` (string), `enableDebug` (boolean).
+- REST routes:
+  - `GET /forge-admin-suite/v1/settings`
+  - `POST /forge-admin-suite/v1/settings`
+
+## How to add a new setting
+
+1. Add a default in the PHP settings defaults.
+2. Sanitize and validate in the REST handler.
+3. Add a field in the Settings UI and wire it to the service.
