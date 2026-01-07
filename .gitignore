@@ -8,6 +8,3 @@ coverage/
 ui/node_modules/
 ui/.env*
 ui/.vite/
-ui/dist/
-ui/dist/*
-ui/dist/.vite
