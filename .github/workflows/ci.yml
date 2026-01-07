@@ -23,9 +23,6 @@ jobs:
       - name: Enable Corepack
         run: corepack enable
 
-      - name: Install root dependencies
-        run: pnpm install
-
       - name: Install UI dependencies
         run: pnpm -C ui install
 
@@ -35,10 +32,13 @@ jobs:
       - name: Build UI
         run: pnpm -C ui build
 
-      - name: PHP lint
+      - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.0'
 
-      - name: Run PHP lint
-        run: find . -path './ui/node_modules' -prune -o -name '*.php' -print0 | xargs -0 -n 1 php -l
+      - name: PHP lint
+        run: |
+          while IFS= read -r -d '' file; do
+            php -l "$file"
+          done < <(find . -path './ui/node_modules' -prune -o -name '*.php' -print0)

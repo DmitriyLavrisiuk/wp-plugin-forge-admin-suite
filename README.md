@@ -4,37 +4,45 @@ WordPress plugin with a React admin SPA (Vite + React + TypeScript + Tailwind + 
 
 ## Requirements
 
-- WordPress 6.2 +
+- WordPress 6.2+
 - PHP 8.0+
 - Node.js (LTS)
 - pnpm
 
-## Local development (MAMP + Vite)
+## Setup
 
-1. Start the Vite dev server:
+Clone the repo into `wp-content/plugins/forge-admin-suite`.
+
+## MAMP notes
+
+- WordPress site can run at `http://localhost:8888`.
+- Vite dev server runs at `http://localhost:5173`.
+
+## Development
 
 ```
 pnpm -C ui install
 pnpm -C ui dev
 ```
 
-2. In WordPress admin, open **Forge Suite**. The plugin will load assets from `http://localhost:5173` with HMR.
+Open WordPress admin and navigate to **Forge Suite**. The plugin loads assets from the Vite dev server with HMR.
 
 ## Production build
 
 ```
-pnpm -C ui install
 pnpm -C ui build
 ```
 
-The build outputs to `ui/dist` and the plugin reads `ui/dist/.vite/manifest.json` for production assets.
+WordPress loads production assets from `ui/dist/.vite/manifest.json`.
 
-## Versioning & tags
+## Versioning workflow
 
-Tag builds as `v0.1.0`, `v0.1.1`, etc., and update `CHANGELOG.md` for each release.
+1. Create a release branch (e.g. `release/v0.1.1`).
+2. Open a PR, review, and merge.
+3. Tag the merge commit (e.g. `v0.1.1`).
+4. Delete the release branch after the tag is pushed.
 
-## REST API
+## Troubleshooting
 
-- Namespace: `forge-admin-suite/v1`
-- Route: `GET /ping`
-- Requires `manage_options` capability and `X-WP-Nonce` (`wp_rest`) header.
+- If Vite is not running, the plugin falls back to the production build in `ui/dist`.
+- REST calls require a valid nonce (`X-WP-Nonce`) and `manage_options` capability.

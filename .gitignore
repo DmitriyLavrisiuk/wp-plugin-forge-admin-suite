@@ -2,9 +2,9 @@
 *.log
 .idea/
 .vscode/
+node_modules/
 .cache/
 coverage/
 ui/node_modules/
 ui/.env*
 ui/.vite/
-ui/.turbo/
