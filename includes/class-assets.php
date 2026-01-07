@@ -2,9 +2,7 @@
 
 namespace Forge_Admin_Suite;
 
-if (!defined('ABSPATH')) {
-    exit;
-}
+defined('ABSPATH') || exit;
 
 class Assets
 {
@@ -68,6 +66,14 @@ class Assets
 
     private function is_vite_dev_server_available()
     {
+        $cached = get_transient('forge_admin_suite_vite_up');
+        if ($cached === 'up') {
+            return true;
+        }
+        if ($cached === 'down') {
+            return false;
+        }
+
         $response = wp_remote_get(
             'http://localhost:5173/@vite/client',
             array(
@@ -75,11 +81,10 @@ class Assets
             )
         );
 
-        if (is_wp_error($response)) {
-            return false;
-        }
+        $is_up = !is_wp_error($response) && wp_remote_retrieve_response_code($response) === 200;
+        set_transient('forge_admin_suite_vite_up', $is_up ? 'up' : 'down', 60);
 
-        return wp_remote_retrieve_response_code($response) === 200;
+        return $is_up;
     }
 
     private function enqueue_dev_assets()

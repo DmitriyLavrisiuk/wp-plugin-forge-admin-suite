@@ -7,9 +7,7 @@
  * Text Domain: forge-admin-suite
  */
 
-if (!defined('ABSPATH')) {
-    exit;
-}
+defined('ABSPATH') || exit;
 
 define('FORGE_ADMIN_SUITE_VERSION', '0.1.0');
 define('FORGE_ADMIN_SUITE_PATH', plugin_dir_path(__FILE__));

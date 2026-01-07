@@ -2,9 +2,7 @@
 
 namespace Forge_Admin_Suite;
 
-if (!defined('ABSPATH')) {
-    exit;
-}
+defined('ABSPATH') || exit;
 
 class Admin_Page
 {
