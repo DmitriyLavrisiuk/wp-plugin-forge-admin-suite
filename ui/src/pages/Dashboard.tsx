@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import ErrorState from '../components/common/ErrorState';
 import LoadingState from '../components/common/LoadingState';
 import { apiGet } from '../lib/apiClient';
+import { getAppConfig } from '../lib/appConfig';
 
 type PingResponse = {
   ok: boolean;
@@ -17,6 +18,7 @@ type RequestState =
 
 function Dashboard() {
   const [state, setState] = useState<RequestState>({ status: 'loading' });
+  const { pluginVersion } = getAppConfig();
 
   const fetchPing = useCallback(async () => {
     setState({ status: 'loading' });
@@ -63,6 +65,10 @@ function Dashboard() {
               <p>
                 <span className="font-semibold">Version:</span>{' '}
                 {state.data.version}
+              </p>
+              <p>
+                <span className="font-semibold">Plugin version:</span>{' '}
+                {pluginVersion}
               </p>
             </div>
           )}

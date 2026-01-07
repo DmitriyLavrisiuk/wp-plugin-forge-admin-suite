@@ -96,7 +96,7 @@ class Assets
             $client_handle,
             'http://localhost:5173/@vite/client',
             array(),
-            null,
+            FORGE_ADMIN_SUITE_VERSION,
             true
         );
         wp_script_add_data($client_handle, 'type', 'module');
@@ -105,7 +105,7 @@ class Assets
             $app_handle,
             'http://localhost:5173/src/main.tsx',
             array(),
-            null,
+            FORGE_ADMIN_SUITE_VERSION,
             true
         );
         wp_script_add_data($app_handle, 'type', 'module');
@@ -131,11 +131,12 @@ class Assets
         $entry = $manifest['src/main.tsx'];
         if (!empty($entry['file'])) {
             $handle = 'forge-admin-suite-app';
+            $relative_path = 'ui/dist/' . ltrim($entry['file'], '/');
             wp_enqueue_script(
                 $handle,
-                FORGE_ADMIN_SUITE_URL . 'ui/dist/' . ltrim($entry['file'], '/'),
+                FORGE_ADMIN_SUITE_URL . $relative_path,
                 array(),
-                FORGE_ADMIN_SUITE_VERSION,
+                $this->get_asset_version($relative_path),
                 true
             );
             wp_script_add_data($handle, 'type', 'module');
@@ -144,13 +145,27 @@ class Assets
         if (!empty($entry['css']) && is_array($entry['css'])) {
             foreach ($entry['css'] as $index => $css_file) {
                 $style_handle = 'forge-admin-suite-style-' . $index;
+                $relative_path = 'ui/dist/' . ltrim($css_file, '/');
                 wp_enqueue_style(
                     $style_handle,
-                    FORGE_ADMIN_SUITE_URL . 'ui/dist/' . ltrim($css_file, '/'),
+                    FORGE_ADMIN_SUITE_URL . $relative_path,
                     array(),
-                    FORGE_ADMIN_SUITE_VERSION
+                    $this->get_asset_version($relative_path)
                 );
             }
         }
+    }
+
+    private function get_asset_version($relative_path)
+    {
+        $absolute_path = FORGE_ADMIN_SUITE_PATH . ltrim($relative_path, '/');
+        if (file_exists($absolute_path)) {
+            $modified = filemtime($absolute_path);
+            if ($modified !== false) {
+                return (string) $modified;
+            }
+        }
+
+        return FORGE_ADMIN_SUITE_VERSION;
     }
 }

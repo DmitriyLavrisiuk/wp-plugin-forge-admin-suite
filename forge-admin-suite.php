@@ -2,14 +2,14 @@
 /**
  * Plugin Name: Forge Admin Suite
  * Description: Admin SPA for Forge Admin Suite.
- * Version: 0.1.0
+ * Version: 0.1.3
  * Author: Forge
  * Text Domain: forge-admin-suite
  */
 
 defined('ABSPATH') || exit;
 
-define('FORGE_ADMIN_SUITE_VERSION', '0.1.0');
+define('FORGE_ADMIN_SUITE_VERSION', '0.1.3');
 define('FORGE_ADMIN_SUITE_PATH', plugin_dir_path(__FILE__));
 define('FORGE_ADMIN_SUITE_URL', plugin_dir_url(__FILE__));
 define('FORGE_ADMIN_SUITE_BASENAME', plugin_basename(__FILE__));
