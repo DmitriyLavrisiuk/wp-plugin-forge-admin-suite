@@ -46,3 +46,11 @@ WordPress loads production assets from `ui/dist/.vite/manifest.json`.
 
 - If Vite is not running, the plugin falls back to the production build in `ui/dist`.
 - REST calls require a valid nonce (`X-WP-Nonce`) and `manage_options` capability.
+
+## UI architecture
+
+- `ui/src/lib/appConfig.ts` exposes the WordPress-provided config and throws if missing.
+- `ui/src/lib/apiClient.ts` wraps REST calls with nonce handling and normalized errors.
+- `ui/src/components/common/` contains shared UI (loading, error, error boundary).
+- New pages should live in `ui/src/pages/`, wired through `ui/src/App.tsx`.
+- Toasts use `sonner` and are triggered via `toast.*` with the `Toaster` mounted in `App`.
