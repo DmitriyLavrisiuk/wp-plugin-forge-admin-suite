@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.1.6
+- Add frontend asset setting with REST persistence and Vite frontend entry.
+
 ## v0.1.4
 - Settings MVP with REST endpoints, UI form, and version bump.
 
