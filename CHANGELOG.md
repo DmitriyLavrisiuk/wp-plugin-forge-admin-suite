@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.1.7
+- Add frontend asset toggle with Vite dev/prod entry, settings support, and version bump.
+
 ## v0.1.6
 - Add frontend asset setting with REST persistence and Vite frontend entry.
 

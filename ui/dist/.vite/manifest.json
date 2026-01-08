@@ -1,11 +1,17 @@
 {
-  "index.html": {
-    "file": "assets/index-BhBblFB-.js",
-    "name": "index",
-    "src": "index.html",
+  "src/frontend.ts": {
+    "file": "assets/frontend-Csk2gnpT.js",
+    "name": "frontend",
+    "src": "src/frontend.ts",
+    "isEntry": true
+  },
+  "src/main.tsx": {
+    "file": "assets/admin-CRtyOX5k.js",
+    "name": "admin",
+    "src": "src/main.tsx",
     "isEntry": true,
     "css": [
-      "assets/index-D0ItmgwC.css"
+      "assets/admin-SiSN9MBO.css"
     ]
   }
 }

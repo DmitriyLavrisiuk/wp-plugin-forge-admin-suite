@@ -35,6 +35,11 @@ pnpm -C ui build
 
 WordPress loads production assets from `ui/dist/.vite/manifest.json`.
 
+## Release notes (v0.1.7)
+
+- Frontend asset toggle with REST persistence and public enqueue logic.
+- Public assets load from Vite in dev and `ui/dist` in production.
+
 ## Release notes (v0.1.6)
 
 - Frontend asset setting with REST persistence and a dedicated Vite entry.
@@ -52,9 +57,9 @@ WordPress loads production assets from `ui/dist/.vite/manifest.json`.
 
 ## Versioning workflow
 
-1. Create a release branch (e.g. `release/v0.1.6`).
+1. Create a release branch (e.g. `release/v0.1.7`).
 2. Open a PR, review, and merge.
-3. Tag the merge commit (e.g. `v0.1.6`).
+3. Tag the merge commit (e.g. `v0.1.7`).
 4. Delete the release branch after the tag is pushed.
 
 ## Versioning checklist
@@ -77,13 +82,19 @@ WordPress loads production assets from `ui/dist/.vite/manifest.json`.
 - New pages should live in `ui/src/pages/`, wired through `ui/src/App.tsx`.
 - Toasts use `sonner` and are triggered via `toast.*` with the `Toaster` mounted in `App`.
 
-## Settings (v0.1.6)
+## Settings (v0.1.7)
 
 - Stored in the `forge_admin_suite_options` option.
 - Fields: `apiEndpoint` (string), `enableDebug` (boolean), `loadFrontendAssets` (boolean).
 - REST routes:
   - `GET /forge-admin-suite/v1/settings`
   - `POST /forge-admin-suite/v1/settings`
+
+## Frontend assets (v0.1.7)
+
+- Toggle **Load frontend assets** in Settings to enqueue public JS/CSS.
+- Dev uses `http://localhost:5173/src/frontend.ts` when Vite is up.
+- Prod uses `ui/dist/.vite/manifest.json` for the frontend entry.
 
 ## How to add a new setting
 

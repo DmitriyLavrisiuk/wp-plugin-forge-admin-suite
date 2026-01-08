@@ -17,6 +17,7 @@ type LoadState =
 const defaultSettings: SettingsModel = {
   apiEndpoint: '',
   enableDebug: false,
+  loadFrontendAssets: false,
 };
 
 function Settings() {
@@ -118,6 +119,26 @@ function Settings() {
                     setFormState((prev) => ({
                       ...prev,
                       enableDebug: value,
+                    }))
+                  }
+                />
+              </div>
+
+              <div className="flex items-center justify-between rounded-lg border border-slate-200 p-4">
+                <div>
+                  <p className="text-sm font-medium text-slate-900">
+                    Load frontend assets
+                  </p>
+                  <p className="text-xs text-slate-500">
+                    Enable loading Forge Admin Suite JS/CSS on the public site.
+                  </p>
+                </div>
+                <Switch
+                  checked={formState.loadFrontendAssets}
+                  onCheckedChange={(value: boolean) =>
+                    setFormState((prev) => ({
+                      ...prev,
+                      loadFrontendAssets: value,
                     }))
                   }
                 />

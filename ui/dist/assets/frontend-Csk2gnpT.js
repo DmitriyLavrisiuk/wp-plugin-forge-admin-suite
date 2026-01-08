@@ -1,0 +1,1 @@
+const t="forge-admin-suite-frontend";if(!document.getElementById(t)){const e=document.createElement("div");e.id=t,e.textContent="Forge Admin Suite frontend assets loaded.",e.className="m-4 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 shadow-sm",document.body.appendChild(e)}

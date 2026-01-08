@@ -81,6 +81,7 @@ class Rest
         return array(
             'apiEndpoint' => '',
             'enableDebug' => false,
+            'loadFrontendAssets' => false,
         );
     }
 
@@ -121,9 +122,14 @@ class Rest
             ? (bool) rest_sanitize_boolean($params['enableDebug'])
             : false;
 
+        $load_frontend_assets = isset($params['loadFrontendAssets'])
+            ? (bool) rest_sanitize_boolean($params['loadFrontendAssets'])
+            : false;
+
         $settings = array(
             'apiEndpoint' => $api_endpoint,
             'enableDebug' => $enable_debug,
+            'loadFrontendAssets' => $load_frontend_assets,
         );
 
         update_option(self::OPTION_KEY, $settings, false);
