@@ -5,9 +5,9 @@ import Settings from './pages/Settings';
 import ErrorBoundary from './components/common/ErrorBoundary';
 
 const linkBase =
-  'block rounded-lg px-3 py-2 text-sm font-medium transition-colors';
+  'block rounded-lg px-3 py-2 text-sm font-medium no-underline hover:no-underline outline-none shadow-none ring-0 focus:outline-none focus-visible:outline-none focus-visible:ring-0 transition-colors';
 
-function App() {
+  function App() {
   return (
     <HashRouter>
       <ErrorBoundary>
@@ -27,7 +27,7 @@ function App() {
                     `${linkBase} ${
                       isActive
                         ? 'bg-slate-900 text-white'
-                        : 'text-slate-700 hover:bg-slate-100'
+                        : 'text-slate-700 hover:bg-slate-100 hover:text-slate-700'
                     }`
                   }
                 >
@@ -39,7 +39,7 @@ function App() {
                     `${linkBase} ${
                       isActive
                         ? 'bg-slate-900 text-white'
-                        : 'text-slate-700 hover:bg-slate-100'
+                        : 'text-slate-700 hover:bg-slate-100 hover:text-slate-700'
                     }`
                   }
                 >

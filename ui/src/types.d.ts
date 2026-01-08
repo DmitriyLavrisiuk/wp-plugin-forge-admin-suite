@@ -7,6 +7,13 @@ declare global {
       restUrl: string;
       nonce: string;
       pluginVersion: string;
+      env: {
+        mode: 'dev' | 'prod';
+        viteAvailable: boolean;
+        viteOrigin: string;
+        entry: string;
+        manifestPath: string;
+      };
     };
   }
 }

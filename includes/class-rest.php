@@ -44,6 +44,16 @@ class Rest
                 ),
             )
         );
+
+        register_rest_route(
+            'forge-admin-suite/v1',
+            '/dev/recheck-vite',
+            array(
+                'methods' => 'POST',
+                'callback' => array($this, 'handle_recheck_vite'),
+                'permission_callback' => array($this, 'check_permissions'),
+            )
+        );
     }
 
     public function check_permissions(WP_REST_Request $request)
@@ -135,5 +145,14 @@ class Rest
         update_option(self::OPTION_KEY, $settings, false);
 
         return array_merge($this->get_default_settings(), $settings);
+    }
+
+    public function handle_recheck_vite()
+    {
+        delete_transient('forge_admin_suite_vite_origin');
+
+        return array(
+            'ok' => true,
+        );
     }
 }

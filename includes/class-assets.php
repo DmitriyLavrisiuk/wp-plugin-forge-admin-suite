@@ -9,6 +9,17 @@ class Assets
     private $admin_page;
     private $show_missing_assets_notice = false;
     private $use_admin_dev_server = false;
+    private $vite_dev_origin = '';
+    private $admin_env = array(
+        'mode' => 'prod',
+        'viteAvailable' => false,
+        'viteOrigin' => '',
+        'entry' => '',
+        'manifestPath' => '',
+        'viteProbeUrl' => '',
+        'viteProbeOk' => false,
+        'viteProbeError' => '',
+    );
 
     public function __construct(Admin_Page $admin_page)
     {
@@ -31,9 +42,13 @@ class Assets
         }
 
         $mode = apply_filters('forge_admin_suite_asset_mode', null);
+        $this->admin_env['viteAvailable'] = $this->is_vite_dev_server_available();
+        $this->admin_env['viteOrigin'] = $this->vite_dev_origin;
 
-        if ($mode === 'dev' || ($mode === null && $this->is_vite_dev_server_available())) {
+        if ($mode === 'dev' || ($mode === null && $this->admin_env['viteAvailable'])) {
             $this->use_admin_dev_server = true;
+            $this->admin_env['mode'] = 'dev';
+            $this->admin_env['entry'] = 'src/main.tsx';
             $main_handle = $this->enqueue_dev_assets();
             $this->add_inline_app_data($main_handle);
             return;
@@ -41,6 +56,7 @@ class Assets
 
         $main_handle = $this->enqueue_prod_assets();
         if ($main_handle) {
+            $this->admin_env['mode'] = 'prod';
             $this->add_inline_app_data($main_handle);
             return;
         }
@@ -91,6 +107,7 @@ class Assets
             'restUrl' => esc_url_raw(rest_url()),
             'nonce' => wp_create_nonce('wp_rest'),
             'pluginVersion' => FORGE_ADMIN_SUITE_VERSION,
+            'env' => $this->admin_env,
         );
 
         if ($handle) {
@@ -104,35 +121,72 @@ class Assets
 
     private function is_vite_dev_server_available()
     {
-        $cached = get_transient('forge_admin_suite_vite_up');
-        if ($cached === 'up') {
+        if (isset($_GET['forge_recheck_vite']) && $_GET['forge_recheck_vite'] === '1') {
+            delete_transient('forge_admin_suite_vite_origin');
+        }
+
+        $cached = get_transient('forge_admin_suite_vite_origin');
+        if (is_string($cached) && $cached !== '') {
+            $this->vite_dev_origin = $cached;
+            $this->admin_env['viteProbeOk'] = true;
             return true;
         }
-        if ($cached === 'down') {
-            return false;
+
+        $probe_urls = array(
+            'http://127.0.0.1:5173/@vite/client',
+            'http://localhost:5173/@vite/client',
+        );
+        $response = null;
+        $is_up = false;
+        $last_error = '';
+        $last_url = '';
+
+        foreach ($probe_urls as $probe_url) {
+            $last_url = $probe_url;
+            $response = wp_remote_get(
+                $probe_url,
+                array(
+                    'timeout' => 0.5,
+                )
+            );
+
+            if (is_wp_error($response)) {
+                $last_error = $response->get_error_message();
+                continue;
+            }
+
+            $status = wp_remote_retrieve_response_code($response);
+            if ($status === 200) {
+                $is_up = true;
+                $last_error = '';
+                break;
+            }
+
+            $last_error = wp_remote_retrieve_response_message($response);
         }
 
-        $response = wp_remote_get(
-            'http://127.0.0.1:5173/@vite/client',
-            array(
-                'timeout' => 0.2,
-            )
-        );
-
-        $is_up = !is_wp_error($response) && wp_remote_retrieve_response_code($response) === 200;
-        set_transient('forge_admin_suite_vite_up', $is_up ? 'up' : 'down', 60);
+        $this->vite_dev_origin = $is_up ? preg_replace('#/@vite/client$#', '', $last_url) : '';
+        $this->admin_env['viteProbeUrl'] = $last_url;
+        $this->admin_env['viteProbeOk'] = $is_up;
+        $this->admin_env['viteProbeError'] = $is_up ? '' : $last_error;
+        set_transient('forge_admin_suite_vite_origin', $this->vite_dev_origin, 60);
 
         return $is_up;
     }
 
     private function enqueue_dev_assets()
     {
+        $origin = $this->vite_dev_origin;
+        if ($origin === '') {
+            return '';
+        }
+
         $client_handle = 'forge-admin-suite-vite-client';
         $app_handle = 'forge-admin-suite-vite-app';
 
         wp_enqueue_script(
             $client_handle,
-            'http://127.0.0.1:5173/@vite/client',
+            $origin . '/@vite/client',
             array(),
             null,
             true
@@ -141,7 +195,7 @@ class Assets
 
         wp_enqueue_script(
             $app_handle,
-            'http://127.0.0.1:5173/src/main.tsx',
+            $origin . '/src/main.tsx',
             array(),
             null,
             true
@@ -175,7 +229,7 @@ class Assets
             return false;
         }
 
-        $this->manifest_debug['selected_key'] = $entry_key;
+        $this->admin_env['entry'] = $entry_key;
         $main_handle = false;
         if (!empty($entry['file'])) {
             $handle = 'forge-admin-suite-app';
@@ -209,12 +263,17 @@ class Assets
 
     private function enqueue_frontend_dev_assets()
     {
+        $origin = $this->vite_dev_origin;
+        if ($origin === '') {
+            return;
+        }
+
         $client_handle = 'forge-admin-suite-frontend-vite-client';
         $app_handle = 'forge-admin-suite-frontend-vite-app';
 
         wp_enqueue_script(
             $client_handle,
-            'http://127.0.0.1:5173/@vite/client',
+            $origin . '/@vite/client',
             array(),
             null,
             true
@@ -223,7 +282,7 @@ class Assets
 
         wp_enqueue_script(
             $app_handle,
-            'http://127.0.0.1:5173/src/frontend.ts',
+            $origin . '/src/frontend.ts',
             array(),
             null,
             true
@@ -301,6 +360,9 @@ class Assets
         $primary_path = FORGE_ADMIN_SUITE_PATH . 'ui/dist/.vite/manifest.json';
         $fallback_path = FORGE_ADMIN_SUITE_PATH . 'ui/dist/manifest.json';
         $manifest_path = file_exists($primary_path) ? $primary_path : $fallback_path;
+        $this->admin_env['manifestPath'] = $manifest_path === $primary_path
+            ? 'ui/dist/.vite/manifest.json'
+            : 'ui/dist/manifest.json';
 
         if (!file_exists($manifest_path)) {
             return false;
@@ -364,7 +426,7 @@ class Assets
         }
 
         echo '<script type="module">';
-        echo 'import RefreshRuntime from "http://127.0.0.1:5173/@react-refresh";';
+        echo 'import RefreshRuntime from "' . esc_url_raw($this->vite_dev_origin) . '/@react-refresh";';
         echo 'RefreshRuntime.injectIntoGlobalHook(window);';
         echo 'window.$RefreshReg$ = () => {};';
         echo 'window.$RefreshSig$ = () => (type) => type;';
